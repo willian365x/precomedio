@@ -1,55 +1,49 @@
+import os
 import flet as ft
+from dotenv import load_dotenv
 
-from controls.sobre import Sobre
-from controls.doacao import Doacao
+from controles import Calculo
+
+load_dotenv()
 
 
 def main(page: ft.Page):
-    page.title = 'Preço Médio'
+    page.title = 'Preço Médio de Ações'
 
-    # controles
-    # text_msg = ft.Text('Preço Médio', color=ft.Colors.BLUE, size=50)
+    # Controles
+    calculo = Calculo()
+    txt_quantidade = ft.Text()
+    txt_preco = ft.Text()
+    btn_add_calc = ft.ElevatedButton('Adicionar',
+                                     icon=ft.Icons.ADD,
+                                     on_click=lambda e: page.open(calculo),
+                                     )
 
-    # actions
+    # Action
+    def on_close_calculo(e):
+        load_dotenv(override=True)
+        txt_quantidade.value = f"Quantidade: {os.environ.get('QUANTIDADE')}"
+        txt_preco.value = f'Preço: {os.environ.get('PRECO')}'
+        print('Dialog BootoSheet foi fechado.')
+        page.update()
 
-    # View handle
-
-    app_barra = ft.AppBar(
-        leading=ft.Icon(ft.Icons.MONETIZATION_ON_OUTLINED,
-                        color=ft.Colors.LIGHT_BLUE),
-        leading_width=40,
-        title=ft.Text('Preço Médio', weight=ft.FontWeight.BOLD,
-                      color=ft.Colors.LIGHT_BLUE),
-        center_title=True,
-        bgcolor=ft.Colors.SURFACE_CONTAINER_HIGHEST,
-        actions=[
-            ft.IconButton(ft.Icons.ADD, tooltip='Adicionar um novo cálculo',
-                          icon_color=ft.Colors.LIGHT_BLUE),
-            ft.PopupMenuButton(
-                icon_color=ft.Colors.LIGHT_BLUE,
-                items=[
-                    ft.PopupMenuItem('Faça uma doação',
-                                     icon=ft.Icons.CARD_GIFTCARD,
-                                     on_click=lambda e: page.open(Doacao())),
-                    ft.PopupMenuItem("Sobre",
-                                     icon=ft.Icons.MESSAGE,
-                                     on_click=lambda e: page.open(Sobre()))
-                ]
-            )
-        ]
-    )
-
-    page.appbar = app_barra
+    calculo.on_dismiss = on_close_calculo
 
     page.add(
         ft.SafeArea(
-            ft.Container(
-                ft.Column(
-                    [
-                    ]
-                )
+            ft.Column(
+                [
+                    btn_add_calc,
+                    txt_quantidade,
+                    txt_preco
+                ]
             )
         )
     )
 
-ft.app(main)
+    page.overlay.append(calculo)
+    page.update()
+
+
+if __name__ == '__main__':
+    ft.app(main)
