@@ -4,25 +4,28 @@ import flet as ft
 
 load_dotenv()
 
+
 class AppBarra(ft.AppBar):
-    def __init__(self,title=None, icon=None):
+    def __init__(self, title=None, icon=None):
         super().__init__()
-        self.title=ft.Text(title)
-        self.leading_width=40
-        self.leading=ft.Icon(icon)
-        self.actions=[
+        self.title = ft.Text(title)
+        self.leading_width = 40
+        self.leading = ft.Icon(icon)
+        self.actions = [
             ft.IconButton(icon=ft.Icons.ADD,
                           on_click=lambda e: self.page.open(Calculo())),
             ft.PopupMenuButton(
                 items=[
-                    ft.PopupMenuItem('Doação', 
+                    ft.PopupMenuItem('Doação',
                                      icon=ft.Icons.CURRENCY_EXCHANGE),
                     ft.PopupMenuItem('Sobre',
                                      icon=ft.Icons.QUESTION_ANSWER),
                 ]
             )
         ]
-#---------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------
+
+
 class Calculo(ft.BottomSheet):
     def __init__(self):
         self.__field_quantidade = ft.TextField(
@@ -65,15 +68,8 @@ class Calculo(ft.BottomSheet):
                 ),
                 padding=30,
             )
-        
+
         super().__init__(content=self.__content)
-
-        self.__env_path = '.env'
-
-        if not os.path.exists(self.__env_path):
-                with open(self.__env_path, 'w') as env_file:
-                    env_file.write('QUANTIDADE=\n')
-                    env_file.write('PRECO=\n')
 
     def on_click_clear(self):
         self.__field_quantidade.value = None
@@ -83,7 +79,7 @@ class Calculo(ft.BottomSheet):
     def on_click_gravar(self):
         try:
             quantidade = str(self.__field_quantidade.value)
-            preco = str(self.__field_preco.value)            
+            preco = str(self.__field_preco.value)
 
             set_key(self.__env_path, 'QUANTIDADE', quantidade)
             set_key(self.__env_path, 'PRECO', preco)
